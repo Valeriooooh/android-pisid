@@ -20,9 +20,7 @@ class Sensor extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Sensor Chart App',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue),
       home: SensorChartPage(),
     );
   }
@@ -32,8 +30,7 @@ class SensorChartPage extends StatefulWidget {
   const SensorChartPage({super.key});
 
   @override
-  _SensorChartPageState createState() =>
-      _SensorChartPageState(); //Creates the mutable state for this widget
+  _SensorChartPageState createState() => _SensorChartPageState(); //Creates the mutable state for this widget
 }
 
 class _SensorChartPageState extends State<SensorChartPage> {
@@ -48,9 +45,7 @@ class _SensorChartPageState extends State<SensorChartPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Sensor Chart'),
-      ),
+      appBar: AppBar(title: const Text('Sensor Chart')),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0), //Padding around the LineChart
@@ -82,14 +77,16 @@ class _SensorChartPageState extends State<SensorChartPage> {
               ),
               gridData: FlGridData(show: true), //show grid in the chart
               // Adiciona uma linha horizontal vermelha no valor 25
-              extraLinesData: ExtraLinesData(horizontalLines: [
-                HorizontalLine(
-                  y: readingNormalNoise + readingTolerationNoise, //AQUI
-                  color: Colors.blue,
-                  strokeWidth: 2,
-                  dashArray: [10, 5], // Linha pontilhada
-                ),
-              ]),
+              extraLinesData: ExtraLinesData(
+                horizontalLines: [
+                  HorizontalLine(
+                    y: readingNormalNoise + readingTolerationNoise, //AQUI
+                    color: Colors.blue,
+                    strokeWidth: 2,
+                    dashArray: [10, 5], // Linha pontilhada
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -100,8 +97,8 @@ class _SensorChartPageState extends State<SensorChartPage> {
             Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      const Mensagens()), //Navigate to 'Mensagens' screen
+                builder: (context) => const Mensagens(),
+              ), //Navigate to 'Mensagens' screen
             );
           },
           child: const Text('Mensagens'), //Button text
@@ -129,11 +126,14 @@ class _SensorChartPageState extends State<SensorChartPage> {
     String? port = prefs.getString('port');
     for (int id = 1; id <= nSensors; id++) {
       String readingsURL = "http://$ip:$port/scripts/php/getSensors.php";
-      var response = await http.post(Uri.parse(readingsURL), body: {
-        'username': username,
-        'password': password,
-        'sensor': (id).toString()
-      });
+      var response = await http.post(
+        Uri.parse(readingsURL),
+        body: {
+          'username': username,
+          'password': password,
+          'sensor': (id).toString(),
+        },
+      );
 
       var flaglimit = 0;
       if (response.statusCode == 200) {
@@ -144,13 +144,15 @@ class _SensorChartPageState extends State<SensorChartPage> {
           double timeDiff;
 
           for (var reading in jsonData) {
-            readingNormalNoise =
-                double.parse(reading["normalnoise"].toString());
+            readingNormalNoise = double.parse(
+              reading["normalnoise"].toString(),
+            );
             //readingTolerationNoise= double.parse(reading["noisevartoteration"].toString());
             readingTolerationNoise = readingNormalNoise * 0.15;
             readingTime = DateTime.parse(reading["Hour"].toString());
-            currentTime = DateTime.now()
-                .add(const Duration(hours: 1)); // correct time to GMT+0
+            currentTime = DateTime.now().add(
+              const Duration(hours: 1),
+            ); // correct time to GMT+0
             timeDiff = currentTime.difference(readingTime).inSeconds.toDouble();
             //if (timeDiff >= 0.0 && timeDiff < timeLimit) {
             if (timeDiff.isFinite) {
@@ -188,8 +190,7 @@ class _SensorChartPageState extends State<SensorChartPage> {
         }
         setState(() {});
       } else {
-        print(
-            'Failed to load data: ${response.statusCode}'); // Handle the error
+        //print('Failed to load data: ${response.statusCode}'); // Handle the error
       }
     }
   }
